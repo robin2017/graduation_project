@@ -1,0 +1,16 @@
+/.idea
+/out
+/graduation_project.iml
+/apk
+/AndroidAnalysis/.classpath
+/AndroidAnalysis/.idea
+/AndroidAnalysis/.project
+/AndroidAnalysis/.settings
+/AndroidAnalysis/AndroidAnalysis.iml
+/AndroidAnalysis/AndroidAnalysis2.iml
+/AndroidAnalysis/bin
+/MalwareCollection/.classpath
+/MalwareCollection/.project
+/MalwareCollection/.settings
+/MalwareCollection/bin
+/MalwareCollection/MalwareCollection.iml
