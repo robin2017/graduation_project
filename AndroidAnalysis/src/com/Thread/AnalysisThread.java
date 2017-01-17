@@ -96,14 +96,31 @@ public class AnalysisThread extends Thread {
 		GUI.collectionCallFunction(showInfo(4));
 	}
 
-	private void jar() {
+	private int jar() {
+
 		//由于得到的jar文件放在工程中，所以下一步的class的源要在工程中找，并且处理后，要将jar文件删除！！
 		String projectPath=System.getProperty("user.dir");
-		String dex2jarbatPath = projectPath+"/plug/dex2jar/d2j-dex2jar.sh";
+		String dex2jarBat="d2j-dex2jar.sh";
+		String cmd_profix="sh ";
+		if(!System.getProperty("os.name").equals("Mac OS X")){  //非mac，则为windows,需要去掉最后一个子文件夹
+			int lastSeparator=projectPath.lastIndexOf(File.separator);
+			projectPath =projectPath.substring(0, lastSeparator);
+			dex2jarBat="d2j-dex2jar.bat";
+			cmd_profix="";
+		}
+		String dex2jarbatPath = projectPath+File.separator+"plug"+File.separator+"dex2jar"+File.separator+dex2jarBat;
 
 		String dexPath = apkFilePath + File.separator + "classes.dex";
 		String jarPath = apkFilePath + File.separator + "classes.jar";
-		String cmd = "sh "+dex2jarbatPath + " " + dexPath+" -o "+jarPath;
+		String cmd = cmd_profix+dex2jarbatPath + " " + dexPath+" -o "+jarPath;
+		
+		File dex=new File(dexPath);
+		if(!dex.exists()){
+			System.out.println("---->apk中不存在dex文件");
+			return -1;
+		}
+		
+		System.out.println("---->"+cmd);
 		GUI.collectionCallFunction(showInfo(2));
 		Process process;
 		try {
@@ -116,6 +133,7 @@ public class AnalysisThread extends Thread {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return 0;
 	}
 
 	private void zip() {
