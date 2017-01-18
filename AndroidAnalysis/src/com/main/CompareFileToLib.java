@@ -32,13 +32,18 @@ public class CompareFileToLib {
 
 	public static TreeMap<Double, String> hm = new TreeMap<Double, String>(
 			new MyComparator());
-
+	public static String getTagOfFile(String name){
+		String[] arr=name.split("_");
+		return arr[0]+"_"+arr[1];
+	}
 	public static void compare(String libPath, String filePath) {
 		sameCnt = 0;// 可以对static成变赋值！！
 		fileCnt = 0;
-
-		NumberFormat nt = NumberFormat.getPercentInstance();
-		nt.setMinimumFractionDigits(2);
+		String filePathName=filePath.substring(filePath.lastIndexOf(File.separator)+1,filePath.length());
+		
+		NumberFormat nt = NumberFormat.getInstance();
+		nt.setMaximumFractionDigits(4);
+		
 
 		File folder = new File(libPath);
 		File[] files = folder.listFiles();
@@ -53,9 +58,13 @@ public class CompareFileToLib {
 			distance = EditDistance.minDistance_n(aimStr, fileStr);
 			degree = sameDegree(distance, aimStr.length(),
 					fileStr.length());
-			RunThread.threadCallFunction(formatOutToString(file.getName(),
-					aimStr.length(), fileStr.length(), distance,
-					nt.format(degree)));
+//			RunThread.threadCallFunction(formatOutToString(file.getName(),
+//					aimStr.length(), fileStr.length(), distance,
+//					nt.format(degree)));
+			//修改为适合拓扑图的形式
+			RunThread.threadCallFunction(formatOutToString(getTagOfFile(file.getName()),
+					getTagOfFile(filePathName),
+			nt.format(degree)));
 			if (degree > RATE) {
 				sameCnt++;
 				hm.put(degree, file.getName());
@@ -75,14 +84,12 @@ public class CompareFileToLib {
 		return 1 - 1.0 * distance / (a + b);// 无需强制转化，因为默认类型为double
 	}
 
-	public static String formatOutToString(String name, int aimLength,
-			int fileLength, int distance, String sameDegree) {
+	public static String formatOutToString(String name,String filename
+			,String sameDegree) {
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%-30s", name)
-				+ String.format("%10d", aimLength)
-				+ String.format("%10d", fileLength)
-				+ String.format("%10d", distance)
-				+ String.format("%10s", sameDegree));
+		sb.append(String.format("%30s", name)
+				+ String.format("%30s", filename)
+				+ String.format("%30s", sameDegree));
 		return sb.toString();
 	}
 }
