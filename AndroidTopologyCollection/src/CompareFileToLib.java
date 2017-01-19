@@ -1,6 +1,7 @@
 
 
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.Map.Entry;
@@ -29,7 +30,7 @@ public class CompareFileToLib {
 		String[] arr=name.split("_");
 		return arr[0]+"_"+arr[1];
 	}
-	public static void compare(String libPath, String filePath) {
+	public static void compare(String libPath, String filePath) throws IOException {
 		sameCnt = 0;// 可以对static成变赋值！！
 		fileCnt = 0;
 		String filePathName=filePath.substring(filePath.lastIndexOf(File.separator)+1,filePath.length());
@@ -43,7 +44,10 @@ public class CompareFileToLib {
 		String aimStr = ReadTxtFromFile.readTXT(filePath);
 		int distance = 0;
 		double degree = 0;
+		StringBuffer sb=new StringBuffer();
+		StringBuffer sb_simple=new StringBuffer();
 		for (File file : files) {
+		 
 			fileCnt++;
 			System.out.println("共有签名个数：" + files.length
 					+ "  现在比较第" + fileCnt + "个！！");
@@ -60,14 +64,19 @@ public class CompareFileToLib {
 //			RunThread.threadCallFunction(formatOutToString(getTagOfFile(file.getName()),
 //					getTagOfFile(filePathName),
 //			nt.format(degree)));
-			System.out.println(formatOutToString(getTagOfFile(file.getName()),
-					getTagOfFile(filePathName),
-					nt.format(degree)));
-			if (degree > RATE) {
-				sameCnt++;
-				hm.put(degree, file.getName());
-			}
+			String result_tmp=getTagOfFile(file.getName())+" "+
+					getTagOfFile(filePathName)+" "+
+					nt.format(degree);
+			System.out.println(result_tmp);
+			sb.append(result_tmp+"\r\n");
+			if(degree>0.4)
+				sb_simple.append(result_tmp+"\r\n");
+	 
 		}
+		String savePath=Main.resultPath+File.separator+filePathName+".txt";
+		String savePath_simple=Main.resultPath+File.separator+"total.txt";
+		WriteTxtToFile.writeTXT_no_add(savePath, sb.toString());
+		WriteTxtToFile.writeTXT_add(savePath_simple, sb_simple.toString());
 //		RunThread.threadCallFunctionShowInfo("\r\n\r\n\r\n共有相似应用个数： " + sameCnt);
 //		// printResult();
 //		RunThread.threadCallFunction("相似应用如下:");
@@ -82,12 +91,5 @@ public class CompareFileToLib {
 		return 1 - 1.0 * distance / (a + b);// 无需强制转化，因为默认类型为double
 	}
 
-	public static String formatOutToString(String name,String filename
-			,String sameDegree) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(String.format("%30s", name)
-				+ String.format("%30s", filename)
-				+ String.format("%30s", sameDegree));
-		return sb.toString();
-	}
+ 
 }
