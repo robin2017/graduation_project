@@ -73,8 +73,18 @@ public class CompareFileToLib {
 				sb_simple.append(result_tmp+"\r\n");
 	 
 		}
-		String savePath=Main.resultPath+File.separator+filePathName+".txt";
-		String savePath_simple=Main.resultPath+File.separator+"total.txt";
+		String resultPath=null;
+		if(System.getProperty("os.name").equals("Mac OS X")){
+			resultPath=Main.resultPath_mac;
+
+		}else{
+			resultPath=Main.resultPath_windows;
+
+		}
+
+
+		String savePath=resultPath+File.separator+filePathName+".txt";
+		String savePath_simple=resultPath+File.separator+"total.txt";
 		WriteTxtToFile.writeTXT_no_add(savePath, sb.toString());
 		WriteTxtToFile.writeTXT_add(savePath_simple, sb_simple.toString());
 //		RunThread.threadCallFunctionShowInfo("\r\n\r\n\r\n共有相似应用个数： " + sameCnt);
