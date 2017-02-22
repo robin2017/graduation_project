@@ -10,7 +10,7 @@ public class Main {
     public static String libPath_windows="e:\\WorkSpace_VisualStudio\\graduation_projection\\all_apk\\library_social";
 
 
-    public static String resultPath_mac="/Users/robin/workspace/Topology/library_social_result";
+    public static String resultPath_mac="/Users/robin/workspace/Topology/library_social_result_home";
     public static String libPath_mac="/Users/robin/workspace/Topology/library_social";
 
     public static void main(String[] args) throws IOException{
@@ -39,8 +39,7 @@ public class Main {
     	int cnt=0;
     	for (File file : files) {
     		cnt++;
-    		if(cnt<2)
-    			continue;
+
     		String filePath=libPath+File.separator+file.getName();
             CompareFileToLib.compare(libPath,filePath);
           
