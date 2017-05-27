@@ -5,12 +5,47 @@ import java.util.*;
  * Created by robin on 2017/2/24.
  */
 public class MyUtil {
-    private static String BASEROOT="data/";
-    private static double THRESHOLD=1;   //阈值：threshold
+ //   private static String BASEROOT="data/image_data/";
+    private static String IMAGEROOT="data/image/";
+    private static double IMAGETHRESHOLD=0.1;
+    //part1 阈值为  1，    0.9      0.4
+    //part2 阈值为  1,0.9,0.4
+    private static double THRESHOLD=0.55;   //阈值：threshold
     private static int DEGREE=1;   //度：degree    20,10,7
 
+    public void ImageInit(String fold) throws IOException {
+        File folder=new File(IMAGEROOT+fold);
+        File[] files=folder.listFiles();
+        for(File file:files){
+            System.out.println(file.getName());
+            StringBuilder sb = new StringBuilder();
+            try {
+                BufferedReader in = new BufferedReader(new FileReader(file.getAbsoluteFile()));
+                try {
+                    String s;
+                    while ((s = in.readLine()) != null) {
+                        String[] arr=s.split(" ");
+                        if(Double.parseDouble(arr[2])<IMAGETHRESHOLD)
+                            continue;
+                        sb.append(getFlatFromPNGTXT(arr[0])+" "+getFlatFromPNGTXT(arr[1])+" "+arr[2]);
+                        sb.append("\n");
+                    }
+                } finally {
+                    in.close();
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            System.out.println(sb);
+            WriteTxtToFile.writeTXT_add(IMAGEROOT+"RES.txt",sb.toString());
+        }
+    }
+    private String getFlatFromPNGTXT(String str){
+        return str.substring(0,str.length()-10);
+    }
+
     /*从文件a中选出非文件b的内容*/
-    public void exceptAfromB(String fileA,String fileB,String Ab) throws IOException {
+    public void exceptAfromB(String fileA,String fileB,String Ab,String BASEROOT) throws IOException {
         String strA=ReadTxtFromFile.readTXT(BASEROOT+fileA);
         String strB=ReadTxtFromFile.readTXT(BASEROOT+fileB);
         HashSet<String> set=new HashSet<String>();
@@ -28,7 +63,7 @@ public class MyUtil {
     }
 
     /*选出符合条件的记录，并按照度的大小排序给出记录*/
-    public void selectByThresholdAndDegree(String fileName,String newName,String detailName) throws IOException {
+    public void selectByThresholdAndDegree(String fileName,String newName,String detailName,String BASEROOT) throws IOException {
         //第一轮先对达到阈值的进行统计
         HashMap<String,Integer> hashMap=new HashMap<String,Integer>();
         String str=ReadTxtFromFile.readTXT(BASEROOT + fileName);
@@ -41,10 +76,10 @@ public class MyUtil {
                 else
                     hashMap.put(items[0], 1);
 
-                if (hashMap.containsKey(items[1]))
-                    hashMap.put(items[1], hashMap.get(items[1]) + 1);
-                else
-                    hashMap.put(items[1], 1);
+//                if (hashMap.containsKey(items[1]))
+//                    hashMap.put(items[1], hashMap.get(items[1]) + 1);
+//                else
+//                    hashMap.put(items[1], 1);
 
             }
         }
@@ -79,10 +114,10 @@ public class MyUtil {
                 else
                     res_det.put(items[0], 1);
 
-                if (res_det.containsKey(items[1]))
-                    res_det.put(items[1], res_det.get(items[1]) + 1);
-                else
-                    res_det.put(items[1], 1);
+//                if (res_det.containsKey(items[1]))
+//                    res_det.put(items[1], res_det.get(items[1]) + 1);
+//                else
+//                    res_det.put(items[1], 1);
 
             }
         }
@@ -120,7 +155,7 @@ public class MyUtil {
         return sortedMap;
     }
     /*将应用名添加到结果中*/
-    public void addNameForShow(String fileName,String newName,String tableName) throws IOException {
+    public void addNameForShow(String fileName,String newName,String tableName,String BASEROOT) throws IOException {
         String table=ReadTxtFromFile.readTXT(BASEROOT + tableName);
         String arr[]=table.split("\n");
         HashMap<String,String> hm=new HashMap<String,String>();
@@ -152,7 +187,7 @@ public class MyUtil {
     }
 
     /*将文件中的标示替换成应用名*/
-    public void changeFlagToName(String fileName,String newName,String tableName) throws IOException {
+    public void changeFlagToName(String fileName,String newName,String tableName,String BASEROOT) throws IOException {
         String table=ReadTxtFromFile.readTXT(BASEROOT + tableName);
         String arr[]=table.split("\n");
         HashMap<String,String> hm=new HashMap<String,String>();
@@ -181,7 +216,7 @@ public class MyUtil {
     }
 
     /*去除掉文件中自己与自己相似度为1的记录*/
-    public void removeSelfEqual(String fileName,String newName) {
+    public void removeSelfEqual(String fileName,String newName,String BASEROOT) {
 
         try {
             BufferedReader in = new BufferedReader(new FileReader(new File(
